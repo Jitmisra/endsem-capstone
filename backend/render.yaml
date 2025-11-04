@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: endsem-capstone
+    runtime: node
+    plan: free
+    buildCommand: npm install && npm run prisma:generate
+    startCommand: npm start
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: PORT
+        fromService:
+          type: web
+          name: endsem-capstone
+          property: port
+      - key: FRONTEND_URL
+        sync: false
+      - key: NODE_ENV
+        value: production
+
