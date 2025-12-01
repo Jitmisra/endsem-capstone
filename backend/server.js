@@ -2,6 +2,13 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const authRoutes = require('./routes/auth');
+const booksRoutes = require('./routes/books');
+const chaptersRoutes = require('./routes/chapters');
+const subjectsRoutes = require('./routes/subjects');
+const profileRoutes = require('./routes/profile');
+const bookmarksRoutes = require('./routes/bookmarks');
+const chatbotRoutes = require('./routes/chatbot');
+const usersRoutes = require('./routes/users');
 
 dotenv.config();
 
@@ -70,6 +77,13 @@ app.use(express.json());
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/books', booksRoutes);
+app.use('/api/chapters', chaptersRoutes);
+app.use('/api/subjects', subjectsRoutes);
+app.use('/api/profile', profileRoutes);
+app.use('/api/bookmarks', bookmarksRoutes);
+app.use('/api/chatbot', chatbotRoutes);
+app.use('/api/users', usersRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

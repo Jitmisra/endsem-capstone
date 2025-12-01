@@ -11,13 +11,76 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(uuid())
+  id           String     @id @default(uuid())
   name         String
-  email        String   @unique
+  email        String     @unique
   passwordHash String
-  role         String   @default("student") // "admin" or "student"
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  role         String     @default("student") // "admin" or "student"
+  bookmarks    Bookmark[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
 
   @@map("users")
+}
+
+model Subject {
+  id        String   @id @default(uuid())
+  name      String   // e.g., "Mathematics", "Science", "English"
+  class     Int      // 1 to 12
+  books     Book[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([name, class])
+  @@map("subjects")
+}
+
+model Book {
+  id           String    @id @default(uuid())
+  title        String
+  description  String?
+  class        Int       // 1 to 12
+  subjectId    String
+  subject      Subject   @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  publisher    String    @default("NCERT")
+  edition      String?
+  year         Int?
+  coverImage   String    // Book cover image URL (required)
+  chapters     Chapter[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@map("books")
+}
+
+model Chapter {
+  id            String     @id @default(uuid())
+  bookId        String
+  book          Book       @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  chapterNumber Int
+  title         String
+  description   String?
+  chapterImage  String?    // Chapter image URL
+  pdfUrl        String?    // Chapter PDF URL
+  pdfKey        String?    // R2 object key
+  fileSize      Int?
+  pageRange     String?    // e.g., "1-25"
+  bookmarks     Bookmark[]
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  @@unique([bookId, chapterNumber])
+  @@map("chapters")
+}
+
+model Bookmark {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chapterId String
+  chapter   Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, chapterId])
+  @@map("bookmarks")
 }
